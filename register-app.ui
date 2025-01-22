@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>System Identyfikacji Pracowników</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="labelTitle">
+      <property name="text">
+       <string>System Identyfikacji Pracowników</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="tabRegister">
+       <attribute name="title">
+        <string>Rejestracja</string>
+       </attribute>
+       <layout class="QFormLayout" name="formLayoutRegister">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelName">
+          <property name="text">
+           <string>Imię i Nazwisko:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditName"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelDepartment">
+          <property name="text">
+           <string>Dział:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditDepartment"/>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QLabel" name="labelCardInfo">
+          <property name="text">
+           <string>Zbliż kartę RFID do czytnika...</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QPushButton" name="buttonAssignCard">
+          <property name="text">
+           <string>Przypisz Kartę</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2">
+         <widget class="QLabel" name="labelAccess">
+          <property name="text">
+           <string>Dostęp do sal:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBoxAccess">
+          <layout class="QVBoxLayout" name="verticalLayoutAccess">
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala1">
+             <property name="text">
+              <string>Sala 1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala2">
+             <property name="text">
+              <string>Sala 2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala3">
+             <property name="text">
+              <string>Sala 3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala4">
+             <property name="text">
+              <string>Sala 4</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala5">
+             <property name="text">
+              <string>Sala 5</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSala6">
+             <property name="text">
+              <string>Sala 6</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="6" column="0" colspan="2">
+         <widget class="QPushButton" name="buttonSave">
+          <property name="text">
+           <string>Zapisz</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabEmployees">
+       <attribute name="title">
+        <string>Pracownicy</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayoutEmployees">
+        <item>
+         <widget class="QTableWidget" name="tableEmployees">
+          <property name="rowCount">
+           <number>0</number>
+          </property>
+          <property name="columnCount">
+           <number>2</number>
+          </property>
+          <column>
+           <property name="text">
+            <string>Imię i Nazwisko</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Dział</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabAccessLogs">
+       <attribute name="title">
+        <string>Logi Dostępów</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayoutLogs">
+        <item>
+         <widget class="QTableWidget" name="tableLogs">
+          <property name="rowCount">
+           <number>0</number>
+          </property>
+          <property name="columnCount">
+           <number>3</number>
+          </property>
+          <column>
+           <property name="text">
+            <string>Data i Czas</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Imię i Nazwisko</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="buttonExit">
+      <property name="text">
+       <string>Wyjście</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
