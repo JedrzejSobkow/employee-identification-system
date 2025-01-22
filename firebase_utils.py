@@ -50,16 +50,83 @@ def get_all_employees():
         print("No employees found.")
     return employees_for_return
 
-def update_employee(employee_id, updated_data):
-    ref = db.reference(f'employees/{employee_id}')
-    ref.update(updated_data)
-    print(f"Employee {employee_id} updated.")
 
-def delete_employee(employee_id):
+def get_all_employees_and_their_cards():
+    employees = db.collection('users').stream()
+    cards = db.collection('cards').stream()
 
-    ref = db.reference(f'employees/{employee_id}')
-    ref.delete()
-    print(f"Employee {employee_id} deleted.")
+    # Mapowanie kart na podstawie owner_id
+    card_mapping = {}
+    for card in cards:
+        card_details = card.to_dict()
+        owner_id = card_details.get('owner_id')
+        if owner_id:
+            card_mapping[owner_id.get().id] = card.id  # Mapowanie owner_id na id karty
+
+    print("MAPPING" + str(card_mapping))
+    # Tworzenie listy zwracanej z informacjami o pracownikach i przypisanych kartach
+    employees_with_cards = []
+    if employees:
+        for employee in employees:
+            details = employee.to_dict()
+            print(details)
+            employee_id = employee.id
+            full_name = details.get('full_name', 'Nieznane Imię')
+            department = details.get('department', 'Nieznany Dział')
+            access_rooms = details.get('access_rooms', 'Brak dostępu')
+            card_id = card_mapping.get(employee_id, None)  # Przypisana karta lub None
+            print(f"ID: {employee_id}, Name: {full_name}, Department: {department}, Card: {card_id}")
+            employees_with_cards.append({
+                "id": employee_id,
+                "name": full_name,
+                "department": department,
+                "access": access_rooms,
+                "card": card_id
+            })
+    else:
+        print("No employees found.")
+    return employees_with_cards
+
+
+def remove_employee_from_card(card_id):
+    # Uzyskujemy referencję do dokumentu karty
+    card_ref = db.collection("cards").document(card_id)
+    if card_ref.get().exists:
+        # Usuwamy atrybut "owner_id" z dokumentu karty
+        card_ref.update({
+            "owner_id": firestore.DELETE_FIELD  # Usunięcie pola "owner_id"
+        })
+
+        print(f"Karta {card_id} została odłączona od pracownika.")
+
+# def update_employee(employee_id, updated_data):
+#     ref = db.reference(f'employees/{employee_id}')
+#     ref.update(updated_data)
+#     print(f"Employee {employee_id} updated.")
+#
+# def delete_employee(employee_id):
+#
+#     ref = db.reference(f'employees/{employee_id}')
+#     ref.delete()
+#     print(f"Employee {employee_id} deleted.")
+
+def assign_card_to_employee(employee_id, card_id):
+    cards_collection = db.collection('cards')
+    employees_collection = db.collection('users')
+
+    # Referencja do użytkownika
+    employee_ref = employees_collection.document(employee_id)
+
+    # Referencja do karty
+    card_doc = cards_collection.document(card_id)
+    card = card_doc.get()
+
+    if card.exists:
+        card_doc.update({'owner_id': employee_ref})
+        print(f"Karta {card_id} została przypisana do użytkownika {employee_id}.")
+    else:
+        card_doc.set({'owner_id': employee_ref})
+        print(f"Nowa karta {card_id} została utworzona i przypisana do użytkownika {employee_id}.")
 
 def add_log(name, status):
     log_id = str(uuid.uuid4())  # Generator ID
