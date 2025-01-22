@@ -2,6 +2,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets # type: ignore
+from PyQt5.QtCore import Qt
 
 from firebase_utils import *
 
@@ -27,7 +28,7 @@ class EmployeeApp(QtWidgets.QMainWindow):
 
         # Tytuł aplikacji
         self.labelTitle = QtWidgets.QLabel("System Identyfikacji Pracowników", self.centralwidget)
-        self.labelTitle.setAlignment(QtCore.Qt.AlignCenter)
+        self.labelTitle.setAlignment(Qt.AlignCenter)
         self.verticalLayout.addWidget(self.labelTitle)
 
         # Zakładki (Rejestracja, Pracownicy, Logi Dostępów)
