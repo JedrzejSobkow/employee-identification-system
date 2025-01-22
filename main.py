@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtCore import Qt
 import serial
 import threading
+from rfid_reader import rfidRead
 
 from firebase_utils import *
 
@@ -213,37 +214,46 @@ class EmployeeApp(QtWidgets.QMainWindow):
 
     def start_serial_listener(self):
         """Rozpocznij nasłuchiwanie portu szeregowego."""
+
         if self.is_listening:
             return  # Jeśli nasłuchiwanie już trwa, nic nie rób
 
         self.is_listening = True
-        port = "COM9"  # Ustaw odpowiedni port
-        baudrate = 9600  # Ustaw odpowiednią prędkość transmisji
+ #       port = "COM9"  # Ustaw odpowiedni port
+ #       baudrate = 9600  # Ustaw odpowiednią prędkość transmisji
 
-        try:
-            self.serial_port = serial.Serial(port, baudrate, timeout=1)
-            QtWidgets.QMessageBox.information(self, "Sukces", f"Połączono z portem: {port}")
+  #      try:
+  #          self.serial_port = serial.Serial(port, baudrate, timeout=1)
+  #          QtWidgets.QMessageBox.information(self, "Sukces", f"Połączono z portem: {port}")
 
             # Uruchom wątek do nasłuchiwania
-            self.serial_thread = threading.Thread(target=self.listen_serial_data)
-            self.serial_thread.daemon = True
-            self.serial_thread.start()
+        self.serial_thread = threading.Thread(target=self.listen_serial_data)
+        self.serial_thread.daemon = True
+        self.serial_thread.start()
 
-        except serial.SerialException as e:
-            QtWidgets.QMessageBox.critical(self, "Błąd", f"Błąd połączenia z portem szeregowym: {e}")
+   #     except serial.SerialException as e:
+   #         QtWidgets.QMessageBox.critical(self, "Błąd", f"Błąd połączenia z portem szeregowym: {e}")
+
+#    def listen_serial_data(self):
+        # Nasłuchiwanie danych z portu szeregowego.
+#       while True:
+#            if self.serial_port and self.serial_port.in_waiting > 0:
+#                data = self.serial_port.readline().decode('utf-8').strip()
+#                if data:
+#                    # Wykonaj akcję z danymi, np. wyświetlenie ich w oknie
+#                    # QtCore.QMetaObject.invokeMethod(self, "update_ui_with_serial_data", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, data))
+#                    print(data)
+#                    self.card_read = data
+#                    self.labelCardToAssign.setText(f"Karta do przypisania: {data}")
 
     def listen_serial_data(self):
-        """Nasłuchiwanie danych z portu szeregowego."""
-        while True:
-            if self.serial_port and self.serial_port.in_waiting > 0:
-                data = self.serial_port.readline().decode('utf-8').strip()
-                if data:
-                    # Wykonaj akcję z danymi, np. wyświetlenie ich w oknie
-                    # QtCore.QMetaObject.invokeMethod(self, "update_ui_with_serial_data", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, data))
-                    print(data)
-                    self.card_read = data
-                    self.labelCardToAssign.setText(f"Karta do przypisania: {data}")
-    #
+
+        data = rfidRead()
+        self.card_read = data
+        self.labelCardToAssign.setText(f"Karta do przypisania: {data}")
+        
+
+ 
 
     # def update_ui_with_serial_data(self, data):
     #     """Aktualizowanie UI danymi z portu szeregowego."""
@@ -254,7 +264,10 @@ class EmployeeApp(QtWidgets.QMainWindow):
         if self.tabWidget.tabText(index) == "Pracownicy":
             self.load_employees()
         elif self.tabWidget.tabText(index) == "Przypisz Kartę":
+
+
             self.start_serial_listener()
+
             self.load_employees_and_cards_assigned()
             self.card_read = "Brak"
             self.labelCardToAssign.setText(f"Karta do przypisania: Brak")
