@@ -3,23 +3,26 @@
 import firebase_admin
 from PyQt5.uic.properties import QtCore
 from firebase_admin import credentials, db
-import uuid  # To generate unique IDs for employees
+import uuid
+
+"""
+To bedzie trzeba mocno zedytowac
+Jak narazie zrobilem tak na sucho 
+Pewnie kolumny beda mialy inne nazwy, nie wszystko moze git dzialac - trzeba bedzie debugowac jak sie podlaczy
+"""
 
 def initialize_firebase():
-    # Init
     cred = credentials.Certificate('secret key.json')  # Tutaj klucz do firebase trzeba umiescic
     firebase_admin.initialize_app(cred, {
         'databaseURL': "URL to database"
     })
-    print("Firebase initialized successfully.")
+    print("Firebase działa!.")
 
 def get_database_reference(path):
-    # Zwraca referencje do db dla sciezki
     return db.reference(path)
 
 
 def add_employee(name, department, access_rooms):
-    # Dodajemy pracownika
     employee_id = str(uuid.uuid4())  # Generator ID
     ref = db.reference(f'employees/{employee_id}')
     ref.set({
@@ -51,7 +54,6 @@ def delete_employee(employee_id):
     print(f"Employee {employee_id} deleted.")
 
 def add_log(name, status):
-    # Dodajemy logi
     log_id = str(uuid.uuid4())  # Generator ID
     ref = db.reference(f'logs/{log_id}')
     ref.set({
@@ -62,7 +64,6 @@ def add_log(name, status):
     print(f"Log added: {name} - {status}")
 
 def get_logs():
-    # Zczytujemy logi
     ref = db.reference('logs')
     logs = ref.get()
     if logs:

@@ -114,13 +114,11 @@ class EmployeeApp(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.information(self, "Sukces", "Dane zostały zapisane!")
 
     def load_employees(self):
-        """Ładuje listę pracowników z Firebase (przykład)."""
         print("Ładowanie listy pracowników...")
         # get_all_employees()
         # Aktualizacja tabeli self.tableEmployees
 
     def load_logs(self):
-        """Ładuje logi dostępów z Firebase (przykład)."""
         print("Ładowanie logów...")
         # logs = get_logs()
         # Aktualizacja tabeli self.tableLogs
