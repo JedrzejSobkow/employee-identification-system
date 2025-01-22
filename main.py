@@ -2,6 +2,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets # type: ignore
+from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtCore import Qt
 
 from firebase_utils import *
@@ -14,8 +15,8 @@ class EmployeeApp(QtWidgets.QMainWindow):
 
         # Initialize Firebase here or earlier during app setup
         initialize_firebase()
-        self.db_ref = get_database_reference('Database reference')
-        print(self.db_ref.get())
+        # self.db_ref = get_database_reference('Database reference')
+        # print(self.db_ref.get())
 
     def setup_ui(self):
         # Inicjalizacja
@@ -72,8 +73,8 @@ class EmployeeApp(QtWidgets.QMainWindow):
         # Zakładka Pracownicy
         self.tabEmployees = QtWidgets.QWidget()
         self.verticalLayoutEmployees = QtWidgets.QVBoxLayout(self.tabEmployees)
-        self.tableEmployees = QtWidgets.QTableWidget(0, 2, self.tabEmployees)
-        self.tableEmployees.setHorizontalHeaderLabels(["Imię i Nazwisko", "Dział"])
+        self.tableEmployees = QtWidgets.QTableWidget(0, 4, self.tabEmployees)
+        self.tableEmployees.setHorizontalHeaderLabels(["Id", "Imię i Nazwisko", "Dział", "Uprawnienia"])
         self.verticalLayoutEmployees.addWidget(self.tableEmployees)
         self.tabWidget.addTab(self.tabEmployees, "Pracownicy")
 
@@ -94,6 +95,14 @@ class EmployeeApp(QtWidgets.QMainWindow):
         self.buttonSave.clicked.connect(self.register_employee)
         self.buttonExit.clicked.connect(self.close)
 
+        # Obsługa zmiany zakładek
+        self.tabWidget.currentChanged.connect(self.on_tab_changed)
+
+
+    def on_tab_changed(self, index):
+        if self.tabWidget.tabText(index) == "Pracownicy":
+            self.load_employees()
+
     def register_employee(self):
         # Tutaj zrobić POSTA do bazurki
         name = self.lineEditName.text()
@@ -110,14 +119,25 @@ class EmployeeApp(QtWidgets.QMainWindow):
                             self.checkBoxSala5.isChecked(),
                             self.checkBoxSala6.isChecked()]
             print(f"Rejestracja: {name}, {department}, Dostęp: {access_rooms}")
-            # Nie wiem jeszcze jak to będzie wyglądało, ale pewnie jakieś
-            # add_employee(name, department, access_rooms)
+            add_employee(name, department, access_rooms)
             QtWidgets.QMessageBox.information(self, "Sukces", "Dane zostały zapisane!")
 
     def load_employees(self):
+        self.tableEmployees.setRowCount(0)
         print("Ładowanie listy pracowników...")
-        # get_all_employees()
-        # Aktualizacja tabeli self.tableEmployees
+        employees = get_all_employees()
+        for id, f_name, dep, accesses in employees:
+            self.add_row(id, f_name, dep, accesses)
+
+
+    def add_row(self, id, full_name, department, accesses):
+        row_position = self.tableEmployees.rowCount()
+        self.tableEmployees.insertRow(row_position)
+
+        self.tableEmployees.setItem(row_position, 0, QTableWidgetItem(id))
+        self.tableEmployees.setItem(row_position, 1, QTableWidgetItem(full_name))
+        self.tableEmployees.setItem(row_position, 2, QTableWidgetItem(department))
+        self.tableEmployees.setItem(row_position, 3, QTableWidgetItem(str(accesses)))
 
     def load_logs(self):
         print("Ładowanie logów...")

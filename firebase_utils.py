@@ -1,8 +1,9 @@
 # firebase_utils.py
 
-import firebase_admin
 from PyQt5.uic.properties import QtCore
-from firebase_admin import credentials, db
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 import uuid
 
 """
@@ -11,36 +12,43 @@ Jak narazie zrobilem tak na sucho
 Pewnie kolumny beda mialy inne nazwy, nie wszystko moze git dzialac - trzeba bedzie debugowac jak sie podlaczy
 """
 
+db = None
+
 def initialize_firebase():
-    cred = credentials.Certificate('secret key.json')  # Tutaj klucz do firebase trzeba umiescic
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': "URL to database"
-    })
+    cred = credentials.Certificate('firebase-credentials.json')  # Tutaj klucz do firebase trzeba umiescic
+    firebase_admin.initialize_app(cred)
+    global db
+    db = firestore.client()
     print("Firebase działa!.")
 
-def get_database_reference(path):
-    return db.reference(path)
+# def get_database_reference(path):
+#     return db.reference(path)
 
 
-def add_employee(name, department, access_rooms):
+def add_employee(full_name, department, access_rooms):
+    global db
     employee_id = str(uuid.uuid4())  # Generator ID
-    ref = db.reference(f'employees/{employee_id}')
+    ref = db.collection('users').document(employee_id)
     ref.set({
-        'name': name,
+        'full_name': full_name,
         'department': department,
-        'access_rooms': access_rooms
+        'access_rooms': bools_to_decimal(access_rooms[::-1])
     })
-    print(f"Employee {name} added with ID: {employee_id}")
+    print(f"Employee {full_name} added with ID: {employee_id}")
 
 def get_all_employees():
-    ref = db.reference('employees')
-    employees = ref.get()
+    employees = db.collection('users').stream()
+    # employees = ref.get()
+    employees_for_return = []
     if employees:
-        for employee_id, details in employees.items():
-            print(f"ID: {employee_id}, Name: {details['name']}, Department: {details['department']}")
+        for employee in employees:
+            details = employee.to_dict()
+            print(details)
+            print(f"ID: {employee.id}, Name: {details['full_name']}, Department: {details['department']}")
+            employees_for_return.append([employee.id, details['full_name'], details['department'], details["access_rooms"]])
     else:
         print("No employees found.")
-    return employees
+    return employees_for_return
 
 def update_employee(employee_id, updated_data):
     ref = db.reference(f'employees/{employee_id}')
@@ -72,3 +80,8 @@ def get_logs():
     else:
         print("No logs found.")
     return logs
+
+
+def bools_to_decimal(bool_array):
+    binary_str = ''.join(['1' if b else '0' for b in bool_array])
+    return int(binary_str, 2)
