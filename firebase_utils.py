@@ -15,19 +15,17 @@ Pewnie kolumny beda mialy inne nazwy, nie wszystko moze git dzialac - trzeba bed
 db = None
 
 def initialize_firebase():
-    cred = credentials.Certificate('firebase-credentials.json')  # Tutaj klucz do firebase trzeba umiescic
+    cred = credentials.Certificate('firebase-credentials.json')
     firebase_admin.initialize_app(cred)
     global db
     db = firestore.client()
     print("Firebase działa!.")
 
-# def get_database_reference(path):
-#     return db.reference(path)
 
 
 def add_employee(full_name, department, access_rooms):
     global db
-    employee_id = str(uuid.uuid4())  # Generator ID
+    employee_id = str(uuid.uuid4())  
     ref = db.collection('users').document(employee_id)
     ref.set({
         'full_name': full_name,
@@ -55,16 +53,14 @@ def get_all_employees_and_their_cards():
     employees = db.collection('users').stream()
     cards = db.collection('cards').stream()
 
-    # Mapowanie kart na podstawie owner_id
     card_mapping = {}
     for card in cards:
         card_details = card.to_dict()
         owner_id = card_details.get('owner_id')
         if owner_id:
-            card_mapping[owner_id.get().id] = card.id  # Mapowanie owner_id na id karty
+            card_mapping[owner_id.get().id] = card.id  
 
     print("MAPPING" + str(card_mapping))
-    # Tworzenie listy zwracanej z informacjami o pracownikach i przypisanych kartach
     employees_with_cards = []
     if employees:
         for employee in employees:
@@ -89,35 +85,21 @@ def get_all_employees_and_their_cards():
 
 
 def remove_employee_from_card(card_id):
-    # Uzyskujemy referencję do dokumentu karty
     card_ref = db.collection("cards").document(card_id)
     if card_ref.get().exists:
-        # Usuwamy atrybut "owner_id" z dokumentu karty
         card_ref.update({
-            "owner_id": firestore.DELETE_FIELD  # Usunięcie pola "owner_id"
+            "owner_id": firestore.DELETE_FIELD 
         })
 
         print(f"Karta {card_id} została odłączona od pracownika.")
 
-# def update_employee(employee_id, updated_data):
-#     ref = db.reference(f'employees/{employee_id}')
-#     ref.update(updated_data)
-#     print(f"Employee {employee_id} updated.")
-#
-# def delete_employee(employee_id):
-#
-#     ref = db.reference(f'employees/{employee_id}')
-#     ref.delete()
-#     print(f"Employee {employee_id} deleted.")
 
 def assign_card_to_employee(employee_id, card_id):
     cards_collection = db.collection('cards')
     employees_collection = db.collection('users')
 
-    # Referencja do użytkownika
     employee_ref = employees_collection.document(employee_id)
 
-    # Referencja do karty
     card_doc = cards_collection.document(card_id)
     card = card_doc.get()
 
@@ -129,7 +111,7 @@ def assign_card_to_employee(employee_id, card_id):
         print(f"Nowa karta {card_id} została utworzona i przypisana do użytkownika {employee_id}.")
 
 def add_log(name, status):
-    log_id = str(uuid.uuid4())  # Generator ID
+    log_id = str(uuid.uuid4())  
     ref = db.reference(f'logs/{log_id}')
     ref.set({
         'timestamp': QtCore.QDateTime.currentDateTime().toString(QtCore.Qt.ISODate),
