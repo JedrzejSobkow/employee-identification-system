@@ -1,5 +1,3 @@
-# employee-identification-system
-
 # Employee Identification System
 
 The **Employee Identification System** is an application designed to manage employees and their assigned RFID cards for access control within a company. The system utilizes a graphical interface built with PyQt5 and stores data about employees and their access permissions in Firebase Firestore.
